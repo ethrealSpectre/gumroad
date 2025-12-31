@@ -930,6 +930,7 @@ Rails.application.routes.draw do
         resources :products, only: [:show] do
           resources :product_posts, only: [:index]
           resources :existing_product_files, only: [:index]
+          resource :receipt_preview, only: [:show]
         end
         resources :utm_links, only: [:index, :new, :create, :edit, :update, :destroy] do
           collection do
