@@ -27,14 +27,14 @@ class UsersController < ApplicationController
       format.html do
         set_user_page_meta(@user)
         set_favicon_meta_tags(@user)
-        @profile_props = ProfilePresenter.new(pundit_user:, seller: @user).profile_props(seller_custom_domain_url:, request:)
-        @card_data_handling_mode = CardDataHandlingMode.get_card_data_handling_mode(@user)
-        @paypal_merchant_currency = @user.native_paypal_payment_enabled? ?
-                                      @user.merchant_account_currency(PaypalChargeProcessor.charge_processor_id) :
-                                      ChargeProcessor::DEFAULT_CURRENCY_CODE
-        render inertia: "Users/Show", props: @profile_props.merge(
-          card_data_handling_mode: @card_data_handling_mode,
-          paypal_merchant_currency: @paypal_merchant_currency,
+        profile_props = ProfilePresenter.new(pundit_user:, seller: @user).profile_props(seller_custom_domain_url:, request:)
+        card_data_handling_mode = CardDataHandlingMode.get_card_data_handling_mode(@user)
+        paypal_merchant_currency = @user.native_paypal_payment_enabled? ?
+                                     @user.merchant_account_currency(PaypalChargeProcessor.charge_processor_id) :
+                                     ChargeProcessor::DEFAULT_CURRENCY_CODE
+        render inertia: "Users/Show", props: profile_props.merge(
+          card_data_handling_mode:,
+          paypal_merchant_currency:,
           custom_styles: @user&.seller_profile&.custom_styles.to_s
         )
       end

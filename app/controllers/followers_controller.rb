@@ -46,14 +46,42 @@ class FollowersController < ApplicationController
 
   def create
     follower = create_follower(params)
-    return render json: { success: false, message: "Sorry, something went wrong." } if follower.nil?
-    return render json: { success: false, message: follower.errors.full_messages.to_sentence } if follower.errors.present?
+
+    # Handle JSON requests (from React on Rails pages using fetch with accept: json)
+    # Inertia requests have X-Inertia header, so they won't match this condition
+    if request.format.json? && !request.headers["X-Inertia"]
+      return render json: { success: false, message: "Sorry, something went wrong." } if follower.nil?
+      return render json: { success: false, message: follower.errors.full_messages.to_sentence } if follower.errors.present?
+
+      if follower.confirmed?
+        render json: { success: true, message: "You are now following #{follower.user.name_or_username}!" }
+      else
+        render json: { success: true, message: "Check your inbox to confirm your follow request." }
+      end
+      return
+    end
+
+    # Handle Inertia/HTML requests with redirect
+    followed_user = User.find_by_external_id(params[:seller_id])
+    fallback_url = followed_user&.profile_url || root_path
+
+    if follower.nil?
+      flash[:alert] = "Sorry, something went wrong."
+      return redirect_back(fallback_location: fallback_url, allow_other_host: true)
+    end
+
+    if follower.errors.present?
+      flash[:alert] = follower.errors.full_messages.to_sentence
+      return redirect_back(fallback_location: fallback_url, allow_other_host: true)
+    end
 
     if follower.confirmed?
-      render json: { success: true, message: "You are now following #{follower.user.name_or_username}!" }
+      flash[:notice] = "You are now following #{follower.user.name_or_username}!"
     else
-      render json: { success: true, message: "Check your inbox to confirm your follow request." }
+      flash[:notice] = "Check your inbox to confirm your follow request."
     end
+
+    redirect_back(fallback_location: fallback_url, allow_other_host: true)
   end
 
   def new

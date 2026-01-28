@@ -245,11 +245,11 @@ describe UsersController do
 
       @request.host = "#{creator.username}.test.gumroad.com"
       get :show, params: { username: creator.username }
-      expect(assigns[:paypal_merchant_currency]).to eq "USD"
+      expect(inertia.props[:paypal_merchant_currency]).to eq "USD"
 
       create(:merchant_account_paypal, user: creator, currency: "GBP")
       get :show, params: { username: creator.username }
-      expect(assigns[:paypal_merchant_currency]).to eq "GBP"
+      expect(inertia.props[:paypal_merchant_currency]).to eq "GBP"
     end
 
     context "with user signed in as admin for seller" do
@@ -258,14 +258,14 @@ describe UsersController do
 
       include_context "with user signed in as admin for seller"
 
-      it "assigns the correct instance variables" do
+      it "renders the show Inertia page with correct props" do
         expect(ProfilePresenter).to receive(:new).with(seller: creator, pundit_user: controller.pundit_user).at_least(:once).and_call_original
 
         @request.host = "#{creator.username}.test.gumroad.com"
         get :show, params: { username: creator.username }
 
-        profile_props = assigns[:profile_props]
-        expect(profile_props[:creator_profile][:external_id]).to eq(creator.external_id)
+        expect(inertia.component).to eq("Users/Show")
+        expect(inertia.props[:creator_profile][:external_id]).to eq(creator.external_id)
       end
     end
 

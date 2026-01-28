@@ -73,13 +73,9 @@ export function LoggedInUserLayout({ children }: { children: React.ReactNode }) 
       <CurrentSellerProvider value={parseCurrentSeller(current_seller)}>
         <MetaTags />
         <Alert initial={null} />
-        <div id="inertia-shell" className="flex h-screen flex-col lg:flex-row">
-          <main className="flex-1 flex flex-col lg:h-screen overflow-y-auto">
-            {isRouteLoading ? <LoadingSkeleton /> : null}
-            <div className={classNames("flex-1 flex flex-col h-full", { hidden: isRouteLoading })}>
-              {children}
-            </div>
-          </main>
+        {isRouteLoading ? <LoadingSkeleton /> : null}
+        <div className={classNames("flex h-screen flex-col overflow-y-auto", { hidden: isRouteLoading })}>
+          {children}
         </div>
       </CurrentSellerProvider>
     </LoggedInUserProvider>
