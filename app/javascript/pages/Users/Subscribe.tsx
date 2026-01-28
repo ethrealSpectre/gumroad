@@ -3,7 +3,7 @@ import * as React from "react";
 import { cast } from "ts-safe-cast";
 
 import { CreatorProfile } from "$app/parsers/profile";
-import { FollowFormBlock } from "$app/components/Profile/FollowForm";
+import { FollowFormBlockInertia } from "$app/components/Profile/FollowFormInertia";
 import { Layout } from "$app/components/Profile/Layout";
 
 type Props = {
@@ -21,7 +21,7 @@ export default function UsersSubscribePage() {
         </Head>
       ) : null}
       <Layout hideFollowForm creatorProfile={creator_profile}>
-        <FollowFormBlock creatorProfile={creator_profile} className="px-4" />
+        <FollowFormBlockInertia creatorProfile={creator_profile} className="px-4" />
       </Layout>
     </>
   );
