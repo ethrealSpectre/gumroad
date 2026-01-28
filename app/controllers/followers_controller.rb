@@ -58,7 +58,6 @@ class FollowersController < ApplicationController
       return
     end
 
-    # Handle Inertia/HTML requests with redirect
     followed_user = User.find_by_external_id(params[:seller_id])
     fallback_url = followed_user&.profile_url || root_path
 
