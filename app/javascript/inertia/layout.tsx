@@ -64,6 +64,7 @@ export function AuthenticationLayout({ children }: { children: React.ReactNode }
 
 export function LoggedInUserLayout({ children }: { children: React.ReactNode }) {
   const { flash, logged_in_user, current_seller } = usePage<PageProps>().props;
+  const isRouteLoading = useRouteLoading();
 
   useFlashMessage(flash);
 
@@ -72,7 +73,14 @@ export function LoggedInUserLayout({ children }: { children: React.ReactNode }) 
       <CurrentSellerProvider value={parseCurrentSeller(current_seller)}>
         <MetaTags />
         <Alert initial={null} />
-        {children}
+        <div id="inertia-shell" className="flex h-screen flex-col lg:flex-row">
+          <main className="flex-1 flex flex-col lg:h-screen overflow-y-auto">
+            {isRouteLoading ? <LoadingSkeleton /> : null}
+            <div className={classNames("flex-1 flex flex-col h-full", { hidden: isRouteLoading })}>
+              {children}
+            </div>
+          </main>
+        </div>
       </CurrentSellerProvider>
     </LoggedInUserProvider>
   );

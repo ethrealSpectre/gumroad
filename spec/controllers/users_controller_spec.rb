@@ -2,6 +2,7 @@
 
 require "spec_helper"
 require "shared_examples/authorize_called"
+require "inertia_rails/rspec"
 
 describe UsersController do
   render_views
@@ -49,7 +50,7 @@ describe UsersController do
     end
   end
 
-  describe "#show" do
+  describe "#show", inertia: true do
     it "404s if user isn't found in HTML format" do
       expect { get :show, params: { username: "creator" }, format: :html }
         .to raise_error(ActionController::RoutingError)
@@ -162,8 +163,8 @@ describe UsersController do
           expect(assigns(:user)).to eq(@user)
         end
 
-        it "renders the show template" do
-          expect(response).to render_template(:show)
+        it "renders the show Inertia page" do
+          expect(inertia.component).to eq("Users/Show")
         end
       end
 
@@ -197,8 +198,8 @@ describe UsersController do
         end
 
 
-        it "renders the show template" do
-          expect(response).to render_template(:show)
+        it "renders the show Inertia page" do
+          expect(inertia.component).to eq("Users/Show")
         end
 
         describe "when the host is another subdomain that is www with the same apex domain" do
@@ -211,8 +212,8 @@ describe UsersController do
             expect(assigns(:user)).to eq(@user)
           end
 
-          it "renders the show template" do
-            expect(response).to render_template(:show)
+          it "renders the show Inertia page" do
+            expect(inertia.component).to eq("Users/Show")
           end
         end
 
@@ -309,7 +310,7 @@ describe UsersController do
         get :coffee, params: { username: seller.username }
 
         expect(response).to be_successful
-        expect(response.body).to have_selector("title:contains('Buy me a coffee')", visible: false)
+        expect(controller.send(:page_title)).to eq("Buy me a coffee")
       end
     end
 
@@ -667,18 +668,17 @@ describe UsersController do
     end
   end
 
-  describe "GET subscribe" do
+  describe "GET subscribe", inertia: true do
     context "with user signed in as admin for seller" do
       include_context "with user signed in as admin for seller"
 
-      it "assigns the correct instance variables" do
+      it "renders the subscribe Inertia page with correct props" do
         @request.host = "#{creator.username}.test.gumroad.com"
         get :subscribe
 
         expect(controller.send(:page_title)).to eq("Subscribe to creator")
-        profile_presenter = assigns[:profile_presenter]
-        expect(profile_presenter.seller).to eq(creator)
-        expect(profile_presenter.pundit_user).to eq(controller.pundit_user)
+        expect(inertia.component).to eq("Users/Subscribe")
+        expect(inertia.props[:creator_profile][:external_id]).to eq(creator.external_id)
       end
     end
   end
