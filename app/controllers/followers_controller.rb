@@ -46,9 +46,6 @@ class FollowersController < ApplicationController
 
   def create
     follower = create_follower(params)
-
-    # Handle JSON requests (from React on Rails pages using fetch with accept: json)
-    # Inertia requests have X-Inertia header, so they won't match this condition
     if request.format.json? && !request.headers["X-Inertia"]
       return render json: { success: false, message: "Sorry, something went wrong." } if follower.nil?
       return render json: { success: false, message: follower.errors.full_messages.to_sentence } if follower.errors.present?
