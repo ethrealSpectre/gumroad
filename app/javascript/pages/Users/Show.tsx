@@ -14,14 +14,14 @@ export default function UsersShowPage() {
   const props = cast<Props>(usePage().props);
 
   return (
-    <>
+    <div className="flex h-screen flex-col overflow-y-auto">
       {props.custom_styles ? (
         <Head>
           <style type="text/css">{props.custom_styles}</style>
         </Head>
       ) : null}
       <Profile {...props} />
-    </>
+    </div>
   );
 }
 

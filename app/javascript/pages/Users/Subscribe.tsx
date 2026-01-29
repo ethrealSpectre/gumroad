@@ -14,7 +14,7 @@ type Props = {
 export default function UsersSubscribePage() {
   const { creator_profile, custom_styles } = cast<Props>(usePage().props);
   return (
-    <>
+    <div className="flex h-screen flex-col overflow-y-auto">
       {custom_styles ? (
         <Head>
           <style type="text/css">{custom_styles}</style>
@@ -23,7 +23,7 @@ export default function UsersSubscribePage() {
       <Layout hideFollowForm creatorProfile={creator_profile}>
         <FollowFormBlockInertia creatorProfile={creator_profile} className="px-4" />
       </Layout>
-    </>
+    </div>
   );
 }
 

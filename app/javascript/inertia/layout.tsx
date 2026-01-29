@@ -64,7 +64,6 @@ export function AuthenticationLayout({ children }: { children: React.ReactNode }
 
 export function LoggedInUserLayout({ children }: { children: React.ReactNode }) {
   const { flash, logged_in_user, current_seller } = usePage<PageProps>().props;
-  const isRouteLoading = useRouteLoading();
 
   useFlashMessage(flash);
 
@@ -73,10 +72,23 @@ export function LoggedInUserLayout({ children }: { children: React.ReactNode }) 
       <CurrentSellerProvider value={parseCurrentSeller(current_seller)}>
         <MetaTags />
         <Alert initial={null} />
-        {isRouteLoading ? <LoadingSkeleton /> : null}
-        <div className={classNames("flex h-screen flex-col overflow-y-auto", { hidden: isRouteLoading })}>
-          {children}
-        </div>
+        {children}
+      </CurrentSellerProvider>
+    </LoggedInUserProvider>
+  );
+}
+
+export function StandaloneLayout({ children }: { children: React.ReactNode }) {
+  const { flash, logged_in_user, current_seller } = usePage<PageProps>().props;
+
+  useFlashMessage(flash);
+
+  return (
+    <LoggedInUserProvider value={parseLoggedInUser(logged_in_user)}>
+      <CurrentSellerProvider value={parseCurrentSeller(current_seller)}>
+        <MetaTags />
+        <Alert initial={null} />
+        <div className="flex min-h-screen flex-col">{children}</div>
       </CurrentSellerProvider>
     </LoggedInUserProvider>
   );
